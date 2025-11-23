@@ -1,6 +1,6 @@
 "use client";
 
-import { Lock, Mail } from "lucide-react";
+import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [form, setForm] = useState({ email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -65,22 +66,39 @@ export default function LoginPage() {
           />
         </div>
 
-        {/* Password */}
+        {/* Password (with eye toggle) */}
         <div>
           <label className="mb-2 flex items-center gap-2 text-sm font-medium text-slate-700">
             <Lock className="h-4 w-4 text-rose-500" />
             Password
           </label>
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full rounded-xl border border-slate-300 px-3 py-2.5 text-sm outline-none placeholder:text-slate-400 focus:border-[#f05454] focus:ring-2 focus:ring-[#f05454]/20 text-black"
-            value={form.password}
-            onChange={(e) => setForm({ ...form, password: e.target.value })}
-          />
+
+          <div className="relative">
+            <input
+              type={showPassword ? "text" : "password"}
+              placeholder="Password"
+              className="w-full rounded-xl border border-slate-300 px-3 py-2.5 pr-11 text-sm outline-none placeholder:text-slate-400 focus:border-[#f05454] focus:ring-2 focus:ring-[#f05454]/20 text-black"
+              value={form.password}
+              onChange={(e) => setForm({ ...form, password: e.target.value })}
+            />
+
+            <button
+              type="button"
+              onClick={() => setShowPassword((prev) => !prev)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              aria-label={showPassword ? "Hide password" : "Show password"}
+            >
+              {/* closed eye by default */}
+              {showPassword ? (
+                <Eye className="h-5 w-5" />
+              ) : (
+                <EyeOff className="h-5 w-5" />
+              )}
+            </button>
+          </div>
         </div>
 
-        {/* Remember / forgot row (optional but matches "form feeling") */}
+        {/* Remember / forgot row */}
         <div className="flex items-center justify-between text-xs text-slate-500">
           <label className="flex items-center gap-2">
             <input

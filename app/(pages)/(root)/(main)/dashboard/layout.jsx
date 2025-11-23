@@ -1,24 +1,27 @@
-"use client";
-
-import { Building2, CalendarDays, Home, LayoutDashboard, Menu, Users } from "lucide-react";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-
-const navItems = [
-  { label: "Overview", icon: LayoutDashboard, href: "/dashboard" },
-  { label: "Listings", icon: Home, href: "/dashboard/listings" },
-  { label: "Leads & CRM", icon: Users, href: "/dashboard/inquiries" },
-  { label: "Tours & Calendar", icon: CalendarDays, href: "/dashboard/tours" },
-  { label: "Agencies & Teams", icon: Building2, href: "/dashboard/agencies" },
-];
-
-export default function DashboardLayout({ children }) {
-  const { data: session, status } = useSession();
-  const router = useRouter();
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [userRole, setUserRole] = useState(null);
+
+  // Fetch user role
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (session?.user?.email) {
+        try {
+          const response = await fetch("/api/auth/me");
+          const data = await response.json();
+          if (data.success) {
+            setUserRole(data.data.role);
+          }
+        } catch (error) {
+          console.error("Error fetching user role:", error);
+        }
+      }
+    };
+
+    if (status === "authenticated") {
+      fetchUserRole();
+    }
+  }, [session, status]);
 
   // Redirect to login if not authenticated
   useEffect(() => {
@@ -28,10 +31,10 @@ export default function DashboardLayout({ children }) {
   }, [status, router]);
 
   // While checking session
-  if (status === "loading") {
+  if (status === "loading" || !userRole) {
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#F4EEE8]">
-        <p className="text-sm text-slate-600">Checking your session...</p>
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-500 border-t-transparent"></div>
       </main>
     );
   }
@@ -40,6 +43,16 @@ export default function DashboardLayout({ children }) {
   if (!session) return null;
 
   const displayName = session.user?.name || session.user?.email || "User";
+  const navItems = getNavItems(userRole);
+
+  // Role badge color
+  const getRoleBadge = () => {
+    if (userRole === "admin") return { label: "Admin", color: "bg-purple-500" };
+    if (userRole === "agent") return { label: "Agent", color: "bg-blue-500" };
+    return { label: "Client", color: "bg-green-500" };
+  };
+
+  const roleBadge = getRoleBadge();
 
   return (
     <main className="min-h-screen bg-[#F4EEE8]">
@@ -56,13 +69,28 @@ export default function DashboardLayout({ children }) {
                 MetroNest
               </p>
               <p className="text-sm font-semibold text-slate-900">
-                Agency Dashboard
+                Dashboard
               </p>
             </div>
           </Link>
 
+          {/* User Info */}
+          <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3">
+            <div className="flex items-center gap-2">
+              <div className="h-8 w-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-semibold text-sm">
+                {displayName.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-medium text-slate-900 truncate">{displayName}</p>
+                <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium text-white ${roleBadge.color}`}>
+                  {roleBadge.label}
+                </span>
+              </div>
+            </div>
+          </div>
+
           {/* Nav */}
-          <nav className="mt-8 space-y-1">
+          <nav className="mt-6 space-y-1">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = pathname === item.href;
@@ -99,15 +127,17 @@ export default function DashboardLayout({ children }) {
             })}
           </nav>
 
-          {/* Bottom quick stat */}
-          <div className="mt-auto rounded-2xl bg-slate-900 px-4 py-4 text-slate-100">
-            <p className="text-[11px] font-medium text-slate-300">
-              Today&apos;s Snapshot
-            </p>
-            <p className="mt-1 text-lg font-semibold">3 new inquiries</p>
-            <p className="mt-1 text-[11px] text-slate-400">
-              Respond quickly for higher conversion rates.
-            </p>
+          {/* Logout Button */}
+          <div className="mt-auto pt-4 border-t border-slate-100">
+            <Link
+              href="/api/auth/signout"
+              className="flex w-full items-center gap-2 rounded-2xl px-3.5 py-2.5 text-sm text-slate-600 hover:bg-red-50 hover:text-red-600 transition"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+              Logout
+            </Link>
           </div>
         </aside>
 
@@ -134,6 +164,21 @@ export default function DashboardLayout({ children }) {
                 >
                   ✕
                 </button>
+              </div>
+
+              {/* User Info Mobile */}
+              <div className="mt-4 rounded-2xl bg-slate-50 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <div className="h-8 w-8 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-semibold text-sm">
+                    {displayName.charAt(0).toUpperCase()}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-slate-900 truncate">{displayName}</p>
+                    <span className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-medium text-white ${roleBadge.color}`}>
+                      {roleBadge.label}
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <nav className="mt-6 space-y-1">
@@ -170,6 +215,19 @@ export default function DashboardLayout({ children }) {
                   );
                 })}
               </nav>
+
+              {/* Logout Mobile */}
+              <div className="mt-auto pt-4 border-t border-slate-100">
+                <Link
+                  href="/api/auth/signout"
+                  className="flex w-full items-center gap-2 rounded-2xl px-3.5 py-2.5 text-sm text-slate-600 hover:bg-red-50 hover:text-red-600 transition"
+                >
+                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                  Logout
+                </Link>
+              </div>
             </aside>
           </div>
         )}
@@ -188,15 +246,13 @@ export default function DashboardLayout({ children }) {
                 </button>
                 <div>
                   <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-rose-500">
-                    Dashboard
+                    {roleBadge.label} Dashboard
                   </p>
                   <h1 className="text-lg font-semibold text-slate-900 sm:text-xl md:text-2xl">
                     Welcome back, {displayName}
                   </h1>
                 </div>
               </div>
-
-              
             </div>
           </header>
 

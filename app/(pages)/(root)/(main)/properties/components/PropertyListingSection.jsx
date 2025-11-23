@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
@@ -27,16 +27,19 @@ const sortOptions = [
 ];
 
 export default function PropertyListingSection() {
+  const router = useRouter();
   const searchParams = useSearchParams();
-  const [viewMode, setViewMode] = useState("grid"); // "grid" | "list"
+  const [viewMode, setViewMode] = useState("grid");
   const [sortBy, setSortBy] = useState("default");
   const [favorites, setFavorites] = useState([]);
   const [properties, setProperties] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  const [loadingFavorites, setLoadingFavorites] = useState(false);
 
-  // ---- FILTER STATE (left sidebar) ----
+  // ---- FILTER STATE ----
   const [filters, setFilters] = useState({
-    dealType: "all", // all | buy | rent
+    dealType: "all",
     propertyType: "all",
     minPrice: "",
     maxPrice: "",
@@ -67,6 +70,42 @@ export default function PropertyListingSection() {
       isFurnished: false,
       petFriendly: false,
     });
+
+  // ---- CHECK USER AUTHENTICATION ----
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/auth/me");
+        const data = await response.json();
+        
+        if (data.success) {
+          setUser(data.data);
+          // Fetch user's favorites if logged in
+          fetchUserFavorites(data.data._id);
+        }
+      } catch (error) {
+        console.error("Auth check failed:", error);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  // ---- FETCH USER'S FAVORITES ----
+  const fetchUserFavorites = async (userId) => {
+    try {
+      const response = await fetch(`/api/favorites?userId=${userId}`);
+      const data = await response.json();
+      
+      if (data.success) {
+        // Extract property IDs from favorites
+        const favoriteIds = data.data.map(fav => fav.property._id || fav.property);
+        setFavorites(favoriteIds);
+      }
+    } catch (error) {
+      console.error("Error fetching favorites:", error);
+    }
+  };
 
   // ---- FETCH PROPERTIES ----
   useEffect(() => {
@@ -103,13 +142,71 @@ export default function PropertyListingSection() {
     fetchProperties();
   }, [searchParams]);
 
-  const toggleFavorite = (id) => {
-    setFavorites((prev) =>
-      prev.includes(id) ? prev.filter((p) => p !== id) : [...prev, id]
-    );
+  // ---- TOGGLE FAVORITE WITH AUTH CHECK ----
+  const toggleFavorite = async (propertyId) => {
+    // Check if user is logged in
+    if (!user) {
+      toast.error("Please login to add favorites");
+      // Redirect to login page with return URL
+      router.push(`/login?redirect=/properties`);
+      return;
+    }
+
+    // Prevent multiple clicks
+    if (loadingFavorites) return;
+
+    setLoadingFavorites(true);
+    const isFavorite = favorites.includes(propertyId);
+
+    try {
+      if (isFavorite) {
+        // Remove from favorites
+        const response = await fetch("/api/favorites", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user._id,
+            propertyId: propertyId,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setFavorites((prev) => prev.filter((id) => id !== propertyId));
+          toast.success("Removed from favorites");
+        } else {
+          toast.error(data.message || "Failed to remove favorite");
+        }
+      } else {
+        // Add to favorites
+        const response = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: user._id,
+            propertyId: propertyId,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          setFavorites((prev) => [...prev, propertyId]);
+          toast.success("Added to favorites");
+        } else {
+          toast.error(data.message || "Failed to add favorite");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      toast.error("Something went wrong");
+    } finally {
+      setLoadingFavorites(false);
+    }
   };
 
-  // ---- RANGE VALUES (min/max price & area from data) ----
+  // ---- RANGE VALUES ----
   const rangeValues = useMemo(() => {
     if (!properties.length) {
       return {
@@ -146,11 +243,9 @@ export default function PropertyListingSection() {
       const city = (property.city || "").toLowerCase();
       const type = (property.propertyType || property.type || "").toLowerCase();
 
-      // deal type
       if (filters.dealType === "buy" && !status.includes("sale")) return false;
       if (filters.dealType === "rent" && !status.includes("rent")) return false;
 
-      // property type
       if (
         filters.propertyType !== "all" &&
         type &&
@@ -158,25 +253,20 @@ export default function PropertyListingSection() {
       )
         return false;
 
-      // price
       if (filters.minPrice && price < Number(filters.minPrice)) return false;
       if (filters.maxPrice && price > Number(filters.maxPrice)) return false;
 
-      // beds / baths
       if (filters.minBeds && beds < Number(filters.minBeds)) return false;
       if (filters.minBaths && baths < Number(filters.minBaths)) return false;
 
-      // area
       if (filters.minArea && area < Number(filters.minArea)) return false;
       if (filters.maxArea && area > Number(filters.maxArea)) return false;
 
-      // keyword
       if (filters.keyword) {
         const k = filters.keyword.toLowerCase();
         if (!title.includes(k) && !address.includes(k)) return false;
       }
 
-      // location
       if (filters.location) {
         const loc = filters.location.toLowerCase();
         if (!address.includes(loc) && !city.includes(loc)) return false;
@@ -198,7 +288,7 @@ export default function PropertyListingSection() {
     });
   }, [properties, filters]);
 
-  // ---- SORT AFTER FILTER ----
+  // ---- SORT ----
   const sortedProperties = useMemo(() => {
     const list = [...filteredProperties];
     if (sortBy === "priceLowHigh") list.sort((a, b) => a.price - b.price);
@@ -447,7 +537,7 @@ export default function PropertyListingSection() {
                   </div>
                 </div>
 
-                {/* Price & Area sliders (separate component) */}
+                {/* Price & Area sliders */}
                 <PriceAreaFilter
                   filters={filters}
                   setFilters={setFilters}
@@ -575,11 +665,13 @@ export default function PropertyListingSection() {
                             </div>
                           </div>
 
-                          {/* Favorite button */}
+                          {/* Favorite button with auth check */}
                           <button
                             type="button"
                             onClick={() => toggleFavorite(property._id)}
-                            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-slate-500 shadow-md backdrop-blur transition hover:bg-rose-50 hover:text-rose-500"
+                            disabled={loadingFavorites}
+                            className="absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full border border-slate-100 bg-white/90 text-slate-500 shadow-md backdrop-blur transition hover:bg-rose-50 hover:text-rose-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                            title={user ? (isFav ? "Remove from favorites" : "Add to favorites") : "Login to add favorites"}
                           >
                             <Heart
                               className={`h-4 w-4 transition ${

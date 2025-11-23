@@ -116,7 +116,19 @@ const PropertySchema = new mongoose.Schema(
       type: Number,
       default: 0,
     },
+     // Add agent reference
+    agent: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+    agentName: String, // Denormalized for faster queries
+    agentEmail: String,
+    agentPhone: String,
+    
+    // ... rest of your existing fields
   },
+ 
   {
     timestamps: true,
   }
