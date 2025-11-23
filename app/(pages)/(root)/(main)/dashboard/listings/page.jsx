@@ -184,6 +184,12 @@ export default function ListingsPage() {
             </div>
             
             <h3 className="mb-2 text-center text-xl font-semibold text-slate-900">
+              Delete Property?
+            </h3>
+            
+            <p className="mb-6 text-center text-sm text-slate-600">
+              Are you sure you want to delete "{deleteModal.title}"? This action cannot be undone.
+            </p>
 
             <div className="flex gap-3">
               <button
@@ -223,169 +229,168 @@ export default function ListingsPage() {
               </button>
             </div>
 
-           <form onSubmit={handleSubmit} className="space-y-4">
-  <div>
-    <label className="mb-1 block text-sm font-medium text-slate-700">
-      Title *
-    </label>
-    <input
-      type="text"
-      required
-      value={formData.title}
-      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      placeholder="Luxury Apartment"
-    />
-  </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Title *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.title}
+                  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  placeholder="Luxury Apartment"
+                />
+              </div>
 
-  <div>
-    <label className="mb-1 block text-sm font-medium text-slate-700">
-      Address *
-    </label>
-    <input
-      type="text"
-      required
-      value={formData.address}
-      onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      placeholder="123 Main St"
-    />
-  </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Address *
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={formData.address}
+                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  placeholder="123 Main St"
+                />
+              </div>
 
-  <div className="grid gap-4 sm:grid-cols-2">
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
-        Price *
-      </label>
-      <input
-        type="number"
-        required
-        value={formData.price}
-        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-        placeholder="500000"
-      />
-    </div>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Price *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={formData.price}
+                    onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                    placeholder="500000"
+                  />
+                </div>
 
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
-        Status *
-      </label>
-      <select
-        value={formData.status}
-        onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      >
-        <option value="For Sale">For Sale</option>
-        <option value="For Rent">For Rent</option>
-        <option value="Sold">Sold</option>
-        <option value="Rented">Rented</option>
-      </select>
-    </div>
-  </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Status *
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  >
+                    <option value="For Sale">For Sale</option>
+                    <option value="For Rent">For Rent</option>
+                    <option value="Sold">Sold</option>
+                    <option value="Rented">Rented</option>
+                  </select>
+                </div>
+              </div>
 
-  <div className="grid gap-4 sm:grid-cols-3">
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
-        Beds *
-      </label>
-      <input
-        type="number"
-        required
-        value={formData.beds}
-        onChange={(e) => setFormData({ ...formData, beds: e.target.value })}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      />
-    </div>
+              <div className="grid gap-4 sm:grid-cols-3">
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Beds *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={formData.beds}
+                    onChange={(e) => setFormData({ ...formData, beds: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  />
+                </div>
 
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
-        Baths *
-      </label>
-      <input
-        type="number"
-        required
-        value={formData.baths}
-        onChange={(e) => setFormData({ ...formData, baths: e.target.value })}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      />
-    </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Baths *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={formData.baths}
+                    onChange={(e) => setFormData({ ...formData, baths: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  />
+                </div>
 
-    <div>
-      <label className="mb-1 block text-sm font-medium text-slate-700">
-        Area (sqft) *
-      </label>
-      <input
-        type="number"
-        required
-        value={formData.area}
-        onChange={(e) => setFormData({ ...formData, area: e.target.value })}
-        className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      />
-    </div>
-  </div>
+                <div>
+                  <label className="mb-1 block text-sm font-medium text-slate-700">
+                    Area (sqft) *
+                  </label>
+                  <input
+                    type="number"
+                    required
+                    value={formData.area}
+                    onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  />
+                </div>
+              </div>
 
-  <div>
-    <label className="mb-1 block text-sm font-medium text-slate-700">Description</label>
-    <textarea
-      rows={3}
-      value={formData.description}
-      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      placeholder="Describe the property..."
-    />
-  </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">Description</label>
+                <textarea
+                  rows={3}
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  placeholder="Describe the property..."
+                />
+              </div>
 
-  <div>
-    <label className="mb-1 block text-sm font-medium text-slate-700">
-      Image URL (ImgBB, Imgur, or direct link)
-    </label>
-    <input
-      type="url"
-      value={formData.mainImage}
-      onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
-      className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-      placeholder="https://i.ibb.co/xxxxx/image.jpg"
-    />
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Image URL (ImgBB, Imgur, or direct link)
+                </label>
+                <input
+                  type="url"
+                  value={formData.mainImage}
+                  onChange={(e) => setFormData({ ...formData, mainImage: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                  placeholder="https://i.ibb.co/xxxxx/image.jpg"
+                />
 
-    {formData.mainImage && (
-      <div className="mt-2">
-        <p className="mb-1 text-xs text-slate-500">Preview:</p>
-        <img
-          src={formData.mainImage}
-          alt="Preview"
-          className="h-20 w-32 rounded-lg object-cover"
-          onError={(e) => {
-            e.target.onerror = null;
-            e.target.src = "/images/pr.png";
-          }}
-        />
-      </div>
-    )}
-  </div>
+                {formData.mainImage && (
+                  <div className="mt-2">
+                    <p className="mb-1 text-xs text-slate-500">Preview:</p>
+                    <img
+                      src={formData.mainImage}
+                      alt="Preview"
+                      className="h-20 w-32 rounded-lg object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "/images/pr.png";
+                      }}
+                    />
+                  </div>
+                )}
+              </div>
 
-  <div className="flex gap-3 border-t border-slate-100 pt-6">
-    <button
-      type="button"
-      onClick={() => {
-        setShowAddForm(false);
-        setEditingProperty(null);
-        resetForm();
-      }}
-      className="flex-1 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-    >
-      Cancel
-    </button>
+              <div className="flex gap-3 border-t border-slate-100 pt-6">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setShowAddForm(false);
+                    setEditingProperty(null);
+                    resetForm();
+                  }}
+                  className="flex-1 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
+                >
+                  Cancel
+                </button>
 
-    <button
-      type="submit"
-      className="flex-1 rounded-full bg-rose-500 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-600"
-    >
-      {editingProperty ? "Update" : "Add Property"}
-    </button>
-  </div>
-</form>
-
+                <button
+                  type="submit"
+                  className="flex-1 rounded-full bg-rose-500 px-6 py-2.5 text-sm font-medium text-white shadow-sm transition hover:bg-rose-600"
+                >
+                  {editingProperty ? "Update" : "Add Property"}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

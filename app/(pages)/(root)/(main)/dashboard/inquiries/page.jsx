@@ -197,6 +197,13 @@ export default function DashboardInquiries() {
       {/* Inquiries List */}
       <div className="space-y-4">
         {filteredInquiries.length === 0 ? (
+          <div className="rounded-3xl bg-white p-12 text-center shadow-sm ring-1 ring-slate-100">
+            <p className="text-slate-500">No inquiries found</p>
+          </div>
+        ) : (
+          filteredInquiries.map((inquiry) => (
+            <div
+              key={inquiry._id}
               className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
