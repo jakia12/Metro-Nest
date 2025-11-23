@@ -143,69 +143,70 @@ export default function PropertyListingSection() {
   }, [searchParams]);
 
   // ---- TOGGLE FAVORITE WITH AUTH CHECK ----
-  const toggleFavorite = async (propertyId) => {
-    // Check if user is logged in
-    if (!user) {
-      toast.error("Please login to add favorites");
-      // Redirect to login page with return URL
-      router.push(`/login?redirect=/properties`);
-      return;
+const toggleFavorite = async (propertyId) => {
+  // Check if user is logged in
+  if (!user) {
+    toast.error("Please login to add favorites");
+    router.push(`/login?redirect=/properties`);
+    return;
+  }
+
+  // Prevent multiple clicks
+  if (loadingFavorites) return;
+
+  setLoadingFavorites(true);
+  const isFavorite = favorites.includes(propertyId);
+
+  try {
+    const endpoint = "/api/client/favorites"; // Changed from /api/favorites
+    const method = isFavorite ? "DELETE" : "POST";
+
+    const response = await fetch(endpoint, {
+      method,
+      headers: { 
+        "Content-Type": "application/json" 
+      },
+      body: JSON.stringify({
+        propertyId: propertyId, // Only send propertyId, not userId
+      }),
+    });
+
+    // Check if response is OK
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
     }
 
-    // Prevent multiple clicks
-    if (loadingFavorites) return;
+    const data = await response.json();
 
-    setLoadingFavorites(true);
-    const isFavorite = favorites.includes(propertyId);
-
-    try {
+    if (data.success) {
       if (isFavorite) {
-        // Remove from favorites
-        const response = await fetch("/api/favorites", {
-          method: "DELETE",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: user._id,
-            propertyId: propertyId,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          setFavorites((prev) => prev.filter((id) => id !== propertyId));
-          toast.success("Removed from favorites");
-        } else {
-          toast.error(data.message || "Failed to remove favorite");
-        }
+        setFavorites((prev) => prev.filter((id) => id !== propertyId));
+        toast.success("Removed from favorites");
       } else {
-        // Add to favorites
-        const response = await fetch("/api/favorites", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userId: user._id,
-            propertyId: propertyId,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (data.success) {
-          setFavorites((prev) => [...prev, propertyId]);
-          toast.success("Added to favorites");
-        } else {
-          toast.error(data.message || "Failed to add favorite");
-        }
+        setFavorites((prev) => [...prev, propertyId]);
+        toast.success("Added to favorites");
       }
-    } catch (error) {
-      console.error("Error toggling favorite:", error);
-      toast.error("Something went wrong");
-    } finally {
-      setLoadingFavorites(false);
+    } else {
+      throw new Error(data.message || "Operation failed");
     }
-  };
 
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+    
+    // More specific error messages
+    if (error.message.includes('fetch')) {
+      toast.error("Network error. Please check your connection.");
+    } else if (error.message.includes('401')) {
+      toast.error("Please login again");
+      router.push('/login');
+    } else {
+      toast.error(error.message || "Something went wrong");
+    }
+  } finally {
+    setLoadingFavorites(false);
+  }
+};
   // ---- RANGE VALUES ----
   const rangeValues = useMemo(() => {
     if (!properties.length) {

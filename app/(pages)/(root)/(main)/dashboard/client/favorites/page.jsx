@@ -14,21 +14,42 @@ export default function ClientFavoritesPage() {
     fetchFavorites();
   }, []);
 
-  const fetchFavorites = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch("/api/client/favorites");
-      const result = await response.json();
-      if (result.success) {
-        setFavorites(result.data);
-      }
-    } catch (error) {
-      console.error("Error:", error);
+ const fetchFavorites = async () => {
+  try {
+    setLoading(true);
+    console.log("Fetching favorites...");
+    
+    const response = await fetch("/api/client/favorites");
+    console.log("Response status:", response.status);
+    
+    const result = await response.json();
+    console.log("Response data:", result);
+    
+    if (result.success) {
+      console.log("Favorites data:", result.data);
+      console.log("Number of favorites:", result.data.length);
+      
+      // Check each favorite
+      result.data.forEach((fav, index) => {
+        console.log(`Favorite ${index}:`, {
+          id: fav._id,
+          hasProperty: !!fav.property,
+          property: fav.property
+        });
+      });
+      
+      setFavorites(result.data);
+    } else {
+      console.error("Failed to fetch:", result.message);
       toast.error("Failed to load favorites");
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error("Error:", error);
+    toast.error("Failed to load favorites");
+  } finally {
+    setLoading(false);
+  }
+};
 
   const confirmDelete = async () => {
     if (!deleteModal) return;
@@ -78,7 +99,7 @@ export default function ClientFavoritesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-semibold text-slate-900">My Favorites</h2>
-          <p className="text-sm text-slate-500">Properties you've saved for later</p>
+          <p className="text-sm text-slate-500">Properties you&apos;ve saved for later</p>
         </div>
         <div className="flex items-center gap-2 text-sm text-slate-600">
           <Heart className="h-4 w-4 text-rose-500 fill-rose-500" />
@@ -104,7 +125,7 @@ export default function ClientFavoritesPage() {
               Are you sure you want to remove
             </p>
             <p className="mb-6 text-center text-base font-semibold text-slate-900">
-              "{deleteModal.property?.title}"?
+              &quot;{deleteModal.property?.title}&quot;?
             </p>
             
             <p className="mb-6 text-center text-xs text-slate-500">

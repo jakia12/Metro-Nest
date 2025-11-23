@@ -1,5 +1,6 @@
+
 import connectDB from "@/database/connect";
-import User from "@/database/models/user";
+import User from "@/database/models/User";
 import { getCurrentUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 

@@ -45,7 +45,7 @@ export default function BrowsePropertiesPage() {
       const data = await response.json();
       
       if (data.success) {
-        setFavorites(data.data.map(fav => fav.property._id || fav.property));
+        setFavorites(data.data.map(fav => fav.propertyId?._id || fav.propertyId));
       }
     } catch (error) {
       console.error("Error fetching favorites:", error);

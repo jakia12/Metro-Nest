@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../../globals.css";
 
+import ChatWidget from "@/components/shared/ChatWidget";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "../../../.././app/providers/providers";
 import Footer from "../../../../components/shared/Footer";
@@ -60,7 +61,7 @@ export default function RootLayout({ children }) {
         <Providers>
         <Navbar />
         <main>   {children}</main>
-
+     <ChatWidget />
         <Footer />
         </Providers>
         {/* jQuery */}

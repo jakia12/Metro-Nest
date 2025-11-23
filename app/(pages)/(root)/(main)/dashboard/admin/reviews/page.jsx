@@ -116,7 +116,7 @@ export default function AdminReviewsPage() {
               </div>
             </div>
 
-            <p className="mb-6 text-sm text-slate-600 line-clamp-3">"{review.comment}"</p>
+            <p className="mb-6 text-sm text-slate-600 line-clamp-3">&quot;{review.comment}&quot;</p>
 
             <div className="flex items-center justify-between border-t border-slate-100 pt-4">
               <button

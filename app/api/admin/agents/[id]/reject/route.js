@@ -1,6 +1,8 @@
+
 import connectDB from "@/database/connect";
 import Notification from "@/database/models/Notification";
-import User from "@/database/models/user";
+import User from "@/database/models/User";
+
 import { getCurrentUser } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
@@ -21,38 +23,59 @@ export async function POST(request, { params }) {
 
     const { id } = params;
 
-    // Find and update agent
+    // Find agent
     const agent = await User.findById(id);
 
-    if (!agent || agent.role !== "agent") {
+    if (!agent) {
       return NextResponse.json(
-        { success: false, message: "Agent not found" },
+        { success: false, message: "User not found" },
         { status: 404 }
       );
+    }
+
+    if (agent.role !== "agent") {
+      return NextResponse.json(
+        { success: false, message: "User is not an agent" },
+        { status: 400 }
+      );
+    }
+
+    // Initialize agentProfile if it doesn't exist
+    if (!agent.agentProfile) {
+      agent.agentProfile = {};
     }
 
     // Deactivate agent account
     agent.isActive = false;
     agent.agentProfile.isVerified = false;
+    
+    // Mark the nested path as modified for Mongoose
+    agent.markModified('agentProfile');
+    
     await agent.save();
 
     // Create notification for agent
-    await Notification.create({
-      user: agent._id,
-      type: "approval",
-      title: "Account Not Approved",
-      message: "Your agent application was not approved. Please contact support for more information.",
-      link: "/contact",
-    });
+    try {
+      await Notification.create({
+        user: agent._id,
+        type: "rejection",
+        title: "Account Not Approved",
+        message: "Your agent application was not approved. Please contact support for more information.",
+        link: "/contact",
+      });
+    } catch (notifError) {
+      console.error("Error creating notification:", notifError);
+      // Don't fail the rejection if notification fails
+    }
 
     return NextResponse.json({
       success: true,
-      message: "Agent rejected",
+      message: "Agent rejected successfully",
     });
   } catch (error) {
     console.error("Error rejecting agent:", error);
     return NextResponse.json(
-      { success: false, message: "Failed to reject agent" },
+      { success: false, message: error.message || "Failed to reject agent" },
       { status: 500 }
     );
   }

@@ -184,19 +184,6 @@ export default function ListingsPage() {
             </div>
             
             <h3 className="mb-2 text-center text-xl font-semibold text-slate-900">
-              Delete Property?
-            </h3>
-            
-            <p className="mb-1 text-center text-sm text-slate-600">
-              Are you sure you want to delete
-            </p>
-            <p className="mb-6 text-center text-base font-semibold text-slate-900">
-              "{deleteModal.title}"?
-            </p>
-            
-            <p className="mb-6 text-center text-xs text-slate-500">
-              This action cannot be undone.
-            </p>
 
             <div className="flex gap-3">
               <button

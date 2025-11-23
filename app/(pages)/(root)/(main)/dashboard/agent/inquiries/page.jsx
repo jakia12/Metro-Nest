@@ -186,7 +186,7 @@ export default function AgentInquiriesPage() {
             
             <div className="mb-4 rounded-xl bg-slate-50 p-4 text-sm text-slate-600">
               <p className="font-medium text-slate-900 mb-1">Inquiry for: {selectedInquiry.property?.title}</p>
-              <p>"{selectedInquiry.message}"</p>
+              <p>&quot;{selectedInquiry.message}&quot;</p>
             </div>
 
             <form onSubmit={handleReply}>

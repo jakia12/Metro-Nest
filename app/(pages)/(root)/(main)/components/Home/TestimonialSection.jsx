@@ -1,7 +1,6 @@
 "use client";
 
-import { Star, Quote } from "lucide-react";
-import Image from "next/image";
+import { Quote, Star } from "lucide-react";
 
 const testimonials = [
   {
@@ -57,7 +56,7 @@ const TestimonialSection = () => {
             What Our Clients Say
           </h2>
           <p className="mt-2 max-w-2xl text-sm md:text-[15px] leading-relaxed text-slate-500">
-            Don't just take our word for it. Here's what our satisfied clients have to say about their experience with MetroNest.
+            Don&apos;t just take our word for it. Here&apos;s what our satisfied clients have to say about their experience with MetroNest.
           </p>
         </div>
 
@@ -88,7 +87,7 @@ const TestimonialSection = () => {
 
               {/* Testimonial Text */}
               <p className="text-sm leading-relaxed text-slate-600 mb-6 flex-grow">
-                "{testimonial.text}"
+                &quot;{testimonial.text}&quot;
               </p>
 
               {/* Author Info */}

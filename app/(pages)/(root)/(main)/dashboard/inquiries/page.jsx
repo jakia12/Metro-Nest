@@ -197,19 +197,6 @@ export default function DashboardInquiries() {
       {/* Inquiries List */}
       <div className="space-y-4">
         {filteredInquiries.length === 0 ? (
-          <div className="rounded-3xl bg-white p-12 text-center shadow-sm ring-1 ring-slate-100">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
-              <Mail className="h-8 w-8 text-slate-400" />
-            </div>
-            <h3 className="text-lg font-semibold text-slate-900">No inquiries yet</h3>
-            <p className="mt-1 text-sm text-slate-500">
-              When users contact you about properties, they'll appear here.
-            </p>
-          </div>
-        ) : (
-          filteredInquiries.map((inquiry) => (
-            <div
-              key={inquiry._id}
               className="rounded-3xl bg-white p-6 shadow-sm ring-1 ring-slate-100 transition hover:shadow-md"
             >
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">

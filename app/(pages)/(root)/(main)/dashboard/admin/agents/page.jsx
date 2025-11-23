@@ -31,20 +31,29 @@ export default function AdminAgentsPage() {
   };
 
   const handleApprove = async (agentId) => {
+    console.log("Attempting to approve agent with ID:", agentId);
+    console.log("ID type:", typeof agentId);
+    console.log("ID value:", JSON.stringify(agentId));
+    
     if (!confirm("Approve this agent?")) return;
 
     try {
-      const response = await fetch(`/api/admin/agents/${agentId}/approve`, {
+      const url = `/api/admin/agents/${agentId}/approve`;
+      console.log("Calling URL:", url);
+      
+      const response = await fetch(url, {
         method: "POST",
       });
 
       const data = await response.json();
+      console.log("Response data:", data);
 
       if (data.success) {
         toast.success("Agent approved successfully!");
         fetchAgents();
       } else {
         toast.error(data.message || "Failed to approve agent");
+        console.error("Approval failed:", data);
       }
     } catch (error) {
       console.error("Error:", error);

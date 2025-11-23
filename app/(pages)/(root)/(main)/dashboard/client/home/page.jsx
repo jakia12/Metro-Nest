@@ -46,32 +46,68 @@ export default function ClientHomePage() {
     }
   };
 
-  const toggleFavorite = async (propertyId) => {
-    try {
-      const isFavorite = favorites.includes(propertyId);
-      
-      const response = await fetch("/api/client/favorites", {
-        method: isFavorite ? "DELETE" : "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ propertyId }),
-      });
+const toggleFavorite = async (propertyId) => {
+  // Check if user is logged in
+  if (!user) {
+    toast.error("Please login to add favorites");
+    router.push(`/login?redirect=${window.location.pathname}`);
+    return;
+  }
 
-      const data = await response.json();
+  // Prevent multiple rapid clicks
+  if (loadingFavorites) return;
 
-      if (data.success) {
-        if (isFavorite) {
-          setFavorites(favorites.filter(id => id !== propertyId));
-          toast.success("Removed from favorites");
-        } else {
-          setFavorites([...favorites, propertyId]);
-          toast.success("Added to favorites");
-        }
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error("Failed to update favorites");
+  setLoadingFavorites(true);
+  const isFavorite = favorites.includes(propertyId);
+
+  // Optimistic update
+  if (isFavorite) {
+    setFavorites(favorites.filter(id => id !== propertyId));
+  } else {
+    setFavorites([...favorites, propertyId]);
+  }
+
+  try {
+    const response = await fetch("/api/client/favorites", {
+      method: isFavorite ? "DELETE" : "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ propertyId }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update favorites");
     }
-  };
+
+    if (data.success) {
+      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+    } else {
+      throw new Error(data.message || "Operation failed");
+    }
+  } catch (error) {
+    console.error("Error toggling favorite:", error);
+    
+    // Revert optimistic update on error
+    if (isFavorite) {
+      setFavorites([...favorites, propertyId]);
+    } else {
+      setFavorites(favorites.filter(id => id !== propertyId));
+    }
+    
+    // Handle specific errors
+    if (error.message.includes("Unauthorized") || error.message.includes("login")) {
+      toast.error("Please login again");
+      router.push("/login");
+    } else if (error.message.includes("already in favorites")) {
+      toast.error("Already in your favorites");
+    } else {
+      toast.error(error.message || "Something went wrong");
+    }
+  } finally {
+    setLoadingFavorites(false);
+  }
+};
 
   const filteredProperties = properties.filter(property =>
     property.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||

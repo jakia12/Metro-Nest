@@ -134,7 +134,7 @@ export default function ClientNotificationsPage() {
             <Bell className="h-12 w-12 text-slate-300 mx-auto mb-3" />
             <p className="text-sm font-medium text-slate-900">No notifications</p>
             <p className="text-xs text-slate-500 mt-1">
-              You're all caught up! We'll notify you of important updates.
+              You&apos;re all caught up! We&apos;ll notify you of important updates.
             </p>
           </div>
         ) : (

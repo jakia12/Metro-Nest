@@ -45,6 +45,58 @@ const iconMap = {
   DollarSign,
 };
 
+const SidebarContent = ({ user, menuItems, pathname, onLinkClick, onLogout }) => (
+  <>
+    {/* User Info */}
+    <div className="p-6 border-b border-slate-700">
+      <div className="flex items-center gap-3">
+        <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-semibold text-lg">
+          {user?.name?.charAt(0).toUpperCase() || "U"}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="font-semibold text-white truncate">{user?.name}</p>
+          <p className="text-xs text-slate-400 capitalize">{user?.role}</p>
+        </div>
+      </div>
+    </div>
+
+    {/* Navigation */}
+    <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+      {menuItems.map((item) => {
+        const Icon = iconMap[item.icon] || Home;
+        const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={onLinkClick}
+            className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              isActive
+                ? "bg-rose-500 text-white shadow-lg"
+                : "text-slate-300 hover:bg-slate-700 hover:text-white"
+            }`}
+          >
+            <Icon className="h-5 w-5 flex-shrink-0" />
+            <span className="text-sm font-medium">{item.label}</span>
+          </Link>
+        );
+      })}
+    </nav>
+
+    {/* Logout Button */}
+    <div className="p-4 border-t border-slate-700">
+      <button
+        onClick={onLogout}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all w-full"
+      >
+        <LogOut className="h-5 w-5" />
+        <span className="text-sm font-medium">Logout</span>
+      </button>
+    </div>
+  </>
+);
+
 export default function DashboardSidebar({ menuItems, user }) {
   const pathname = usePathname();
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -52,58 +104,6 @@ export default function DashboardSidebar({ menuItems, user }) {
   const handleLogout = async () => {
     await signOut({ callbackUrl: "/login" });
   };
-
-  const SidebarContent = () => (
-    <>
-      {/* User Info */}
-      <div className="p-6 border-b border-slate-700">
-        <div className="flex items-center gap-3">
-          <div className="h-12 w-12 rounded-full bg-gradient-to-br from-rose-400 to-rose-600 flex items-center justify-center text-white font-semibold text-lg">
-            {user?.name?.charAt(0).toUpperCase() || "U"}
-          </div>
-          <div className="flex-1 min-w-0">
-            <p className="font-semibold text-white truncate">{user?.name}</p>
-            <p className="text-xs text-slate-400 capitalize">{user?.role}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-        {menuItems.map((item) => {
-          const Icon = iconMap[item.icon] || Home;
-          const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              onClick={() => setIsMobileOpen(false)}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
-                isActive
-                  ? "bg-rose-500 text-white shadow-lg"
-                  : "text-slate-300 hover:bg-slate-700 hover:text-white"
-              }`}
-            >
-              <Icon className="h-5 w-5 flex-shrink-0" />
-              <span className="text-sm font-medium">{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-
-      {/* Logout Button */}
-      <div className="p-4 border-t border-slate-700">
-        <button
-          onClick={handleLogout}
-          className="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-300 hover:bg-red-500/10 hover:text-red-400 transition-all w-full"
-        >
-          <LogOut className="h-5 w-5" />
-          <span className="text-sm font-medium">Logout</span>
-        </button>
-      </div>
-    </>
-  );
 
   return (
     <>
@@ -140,7 +140,13 @@ export default function DashboardSidebar({ menuItems, user }) {
             </div>
           </Link>
         </div>
-        <SidebarContent />
+        <SidebarContent 
+          user={user} 
+          menuItems={menuItems} 
+          pathname={pathname} 
+          onLinkClick={() => {}} 
+          onLogout={handleLogout}
+        />
       </aside>
 
       {/* Mobile Sidebar */}
@@ -164,7 +170,13 @@ export default function DashboardSidebar({ menuItems, user }) {
             </div>
           </Link>
         </div>
-        <SidebarContent />
+        <SidebarContent 
+          user={user} 
+          menuItems={menuItems} 
+          pathname={pathname} 
+          onLinkClick={() => setIsMobileOpen(false)} 
+          onLogout={handleLogout}
+        />
       </aside>
     </>
   );

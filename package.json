@@ -11,6 +11,7 @@
     "test-db": "node database/test-connection.js"
   },
   "dependencies": {
+    "@google/generative-ai": "^0.24.1",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.554.0",
@@ -21,6 +22,7 @@
     "react-countup": "^6.5.3",
     "react-dom": "19.2.0",
     "react-hot-toast": "^2.6.0",
+    "slugify": "^1.6.6",
     "swiper": "^12.0.3"
   },
   "devDependencies": {

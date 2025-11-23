@@ -1,4 +1,55 @@
+
+"use client";
+
+import { getSidebarItems } from "@/lib/dashboardAccess";
+import {
+  BarChart3,
+  Bell,
+  Briefcase,
+  Building2,
+  Calendar,
+  DollarSign,
+  FolderOpen,
+  Heart,
+  Home,
+  Mail,
+  Menu,
+  MessageSquare,
+  Search,
+  Settings,
+  User,
+  UserCheck,
+  Users
+} from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+// Icon mapping to convert string names to components
+const iconMap = {
+  Home,
+  Building2,
+  Users,
+  Calendar,
+  Briefcase,
+  UserCheck,
+  FolderOpen,
+  Settings,
+  BarChart3,
+  User,
+  MessageSquare,
+  Heart,
+  Mail,
+  Bell,
+  Search,
+  DollarSign,
+};
+
+export default function DashboardLayout({ children }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [userRole, setUserRole] = useState(null);
 
@@ -43,7 +94,7 @@
   if (!session) return null;
 
   const displayName = session.user?.name || session.user?.email || "User";
-  const navItems = getNavItems(userRole);
+  const navItems = getSidebarItems(userRole);
 
   // Role badge color
   const getRoleBadge = () => {
@@ -92,7 +143,7 @@
           {/* Nav */}
           <nav className="mt-6 space-y-1">
             {navItems.map((item) => {
-              const Icon = item.icon;
+              const Icon = iconMap[item.icon] || Home; // Fallback to Home icon
               const isActive = pathname === item.href;
               
               return (
@@ -183,7 +234,7 @@
 
               <nav className="mt-6 space-y-1">
                 {navItems.map((item) => {
-                  const Icon = item.icon;
+                  const Icon = iconMap[item.icon] || Home; // Fallback to Home icon
                   const isActive = pathname === item.href;
                   
                   return (

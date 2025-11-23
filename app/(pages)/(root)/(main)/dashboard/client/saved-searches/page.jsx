@@ -177,7 +177,7 @@ export default function SavedSearchesPage() {
               Are you sure you want to delete
             </p>
             <p className="mb-6 text-center text-base font-semibold text-slate-900">
-              "{deleteModal.name}"?
+              &quot;{deleteModal.name}&quot;?
             </p>
 
             <div className="flex gap-3">

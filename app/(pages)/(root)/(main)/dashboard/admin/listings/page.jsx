@@ -98,7 +98,7 @@ export default function AdminListingsPage() {
               Are you sure you want to delete
             </p>
             <p className="mb-6 text-center text-base font-semibold text-slate-900">
-              "{deleteModal.title}"?
+              &quot;{deleteModal.title}&quot;?
             </p>
             
             <p className="mb-6 text-center text-xs text-slate-500">

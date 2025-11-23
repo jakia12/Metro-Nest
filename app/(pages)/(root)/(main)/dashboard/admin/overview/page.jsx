@@ -1,9 +1,11 @@
 import StatsCard from "@/components/dashboard/StatsCard";
 import connectDB from "@/database/connect";
+
 import Inquiry from "@/database/models/Inquiry";
 import Property from "@/database/models/Property";
 import Tour from "@/database/models/Tour";
-import User from "@/database/models/user";
+import User from "@/database/models/User";
+
 import { getCurrentUser } from "@/lib/auth";
 import { Building2, Calendar, TrendingUp, Users } from "lucide-react";
 

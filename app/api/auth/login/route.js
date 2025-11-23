@@ -1,5 +1,6 @@
-import { connectDB } from "@/lib/mongodb";
-import User from "@/models/User";
+
+import connectDB from "@/database/connect";
+import User from "@/database/models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";

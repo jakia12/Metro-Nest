@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import connectDB from "../../../database/connect.js";
+
+import connectDB from "@/database/connect.js";
 import Lead from "../../../database/models/Lead.js";
 
 // GET all leads

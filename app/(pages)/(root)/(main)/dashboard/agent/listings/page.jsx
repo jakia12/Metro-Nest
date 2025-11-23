@@ -25,6 +25,7 @@ export default function AgentListingsPage() {
     description: "",
     mainImage: "",
     featured: false,
+    // Add agent fields - these will be auto-populated from session
   });
 
   useEffect(() => {
@@ -51,7 +52,22 @@ export default function AgentListingsPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // Validate session
+    if (!session?.user?.id) {
+      toast.error("You must be logged in to add properties");
+      return;
+    }
+
     try {
+      // Add agent information from session
+      const propertyData = {
+        ...formData,
+        agent: session.user.id, // Required agent reference
+        agentName: session.user.name || session.user.email,
+        agentEmail: session.user.email,
+        agentPhone: session.user.phone || "", // If you have phone in session
+      };
+
       const url = editingProperty
         ? `/api/properties/${editingProperty._id}`
         : "/api/properties";
@@ -61,7 +77,7 @@ export default function AgentListingsPage() {
       const response = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(propertyData),
       });
 
       const result = await response.json();
@@ -119,6 +135,7 @@ export default function AgentListingsPage() {
       description: property.description || "",
       mainImage: property.mainImage || "",
       featured: property.featured || false,
+      // Agent fields are maintained from the original property
     });
     setShowAddForm(true);
   };
@@ -146,6 +163,17 @@ export default function AgentListingsPage() {
       minimumFractionDigits: 0,
     }).format(price);
   };
+
+  // Show message if user is not logged in
+  if (!session) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="text-center">
+          <p className="text-slate-600">Please log in to manage your listings</p>
+        </div>
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -194,7 +222,7 @@ export default function AgentListingsPage() {
               Are you sure you want to delete
             </p>
             <p className="mb-6 text-center text-base font-semibold text-slate-900">
-              "{deleteModal.title}"?
+              &quot;{deleteModal.title}&quot;?
             </p>
             
             <p className="mb-6 text-center text-xs text-slate-500">
@@ -300,6 +328,28 @@ export default function AgentListingsPage() {
                 </div>
               </div>
 
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-700">
+                  Property Type *
+                </label>
+                <select
+                  value={formData.type}
+                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-black outline-none focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                >
+                  <option value="Apartment">Apartment</option>
+                  <option value="Commercial">Commercial</option>
+                  <option value="Land Or Plot">Land Or Plot</option>
+                  <option value="Farm">Farm</option>
+                  <option value="Villa">Villa</option>
+                  <option value="House">House</option>
+                  <option value="Cottage">Cottage</option>
+                  <option value="Loft">Loft</option>
+                  <option value="Penthouse">Penthouse</option>
+                  <option value="Mansion">Mansion</option>
+                </select>
+              </div>
+
               <div className="grid gap-4 sm:grid-cols-3">
                 <div>
                   <label className="mb-1 block text-sm font-medium text-slate-700">
@@ -378,6 +428,19 @@ export default function AgentListingsPage() {
                     />
                   </div>
                 )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="featured"
+                  checked={formData.featured}
+                  onChange={(e) => setFormData({ ...formData, featured: e.target.checked })}
+                  className="h-4 w-4 rounded border-slate-300 text-rose-500 focus:ring-2 focus:ring-rose-100"
+                />
+                <label htmlFor="featured" className="text-sm font-medium text-slate-700">
+                  Mark as Featured Property
+                </label>
               </div>
 
               <div className="flex gap-3 border-t border-slate-100 pt-6">

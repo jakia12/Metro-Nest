@@ -1,3 +1,20 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { toast } from "react-hot-toast";
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  MapPin, 
+  Building2, 
+  ShieldCheck, 
+  FileText, 
+  Save 
+} from "lucide-react";
+
+export default function AgentProfilePage() {
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
