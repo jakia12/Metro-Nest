@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../../globals.css";
 
+import AIChat from "@/components/AIAssistant/AIChat";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "../../../.././app/providers/providers";
 import Footer from "../../../../components/shared/Footer";
