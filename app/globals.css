@@ -163,3 +163,13 @@ textarea::placeholder {
   color: #9ca3af !important; /* gray-400 */
 }
 
+ @keyframes slideIn {
+          from {
+            opacity: 0;
+            transform: translateX(-20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }

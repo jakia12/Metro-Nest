@@ -3,7 +3,7 @@
 import { Bath, Bed, Home, Search, SlidersHorizontal } from "lucide-react";
 import { useState } from "react";
 
-export default function PropertySearchBar() {
+export default function PropertySearchNew() {
   const [activeTab, setActiveTab] = useState("sale");
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [categories, setCategories] = useState([
@@ -195,29 +195,16 @@ export default function PropertySearchBar() {
   return (
     <>
       {/* Hero Section with Background */}
-       <section className="relative w-full h-[90vh] bg-gray-900 overflow-hidden">
+       <section className="relative w-full   overflow-hidden mb-[60px]">
         {/* Background Image */}
-        <div
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: `url('/images/bg.jpg')`,
-          }}
-        >
-          <div className="absolute inset-0 bg-black/40"></div>
-        </div>
+       
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center justify-center h-full px-4">
-          {/* Title */}
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white text-center mb-3">
-            Find Your Dream House
-          </h1>
-          <p className="text-lg md:text-xl text-white/90 text-center mb-8">
-            We Have Over Million Properties For You.
-          </p>
+         
 
           {/* Tab Buttons */}
-          <div className="flex gap-0 mb-8">
+          {/* <div className="flex gap-0 mb-8">
             <button
               type="button"
               onClick={() => setActiveTab("sale")}
@@ -246,11 +233,11 @@ export default function PropertySearchBar() {
                 <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-8 border-r-8 border-t-8 border-l-transparent border-r-transparent border-t-[#ff5a6a]"></div>
               )}
             </button>
-          </div>
+          </div> */}
 
           {/* Search Card */}
           <div className="w-full max-w-6xl">
-            <div className="relative rounded-2xl bg-white shadow-2xl p-5 md:p-6">
+            <div className="relative rounded-2xl bg-white shadow-3xl p-5 md:p-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
                 {/* Keyword Input */}
                 <div className="lg:col-span-1">

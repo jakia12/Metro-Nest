@@ -1,7 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "../../../globals.css";
 
-import ChatWidget from "@/components/shared/ChatWidget";
 import { Toaster } from "react-hot-toast";
 import { Providers } from "../../../.././app/providers/providers";
 import Footer from "../../../../components/shared/Footer";
@@ -57,11 +56,15 @@ export default function RootLayout({ children }) {
       <head></head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+
+        style={{
+          backgroundColor: "#ffffff",
+        }}
       >
         <Providers>
         <Navbar />
         <main>   {children}</main>
-     <ChatWidget />
+     <AIChat />
         <Footer />
         </Providers>
         {/* jQuery */}

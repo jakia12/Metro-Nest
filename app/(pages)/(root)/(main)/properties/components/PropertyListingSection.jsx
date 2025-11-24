@@ -1,4 +1,3 @@
-// app/components/PropertyListingSection.jsx
 "use client";
 
 import {
@@ -15,7 +14,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 
 import PriceAreaFilter from "./PriceAreaFilter";
@@ -26,7 +25,7 @@ const sortOptions = [
   { value: "priceHighLow", label: "Price: High to Low" },
 ];
 
-export default function PropertyListingSection() {
+function PropertyListingContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [viewMode, setViewMode] = useState("grid");
@@ -755,5 +754,24 @@ const toggleFavorite = async (propertyId) => {
         </div>
       </div>
     </section>
+  );
+}
+
+// Wrapper component with Suspense boundary
+export default function PropertyListingSection() {
+  return (
+    <Suspense fallback={
+      <div className="w-full bg-[#f5f7fb] py-20">
+        <div className="mx-auto max-w-[1600px] px-4 lg:px-0">
+          <div className="flex items-center justify-center py-20">
+            <div className="text-lg text-slate-600">
+              Loading properties...
+            </div>
+          </div>
+        </div>
+      </div>
+    }>
+      <PropertyListingContent />
+    </Suspense>
   );
 }
