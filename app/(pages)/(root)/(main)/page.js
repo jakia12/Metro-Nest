@@ -4,7 +4,7 @@ import ExploreNeighborhoodsSection from "./components/Home/ExploreNeighborhoodsS
 import FaqSection from "./components/Home/FaqSection";
 import FeaturedProperties from "./components/Home/FeaturedProperties";
 import GallerySection from "./components/Home/GallerySection";
-import HeroSection from "./components/Home/HeroSection";
+import HeroBanner from "./components/Home/HeroBanner";
 
 import PropertyCarousel from "./components/Home/PropertyCarousel";
 import TestimonialSection from "./components/Home/TestimonialSection";
@@ -12,7 +12,7 @@ import TestimonialSection from "./components/Home/TestimonialSection";
 export default function Home() {
   return (
     <>
-     <HeroSection/>
+     <HeroBanner/>
       {/* <PropertySearchNew /> */}
 
       <CategoriesSection />

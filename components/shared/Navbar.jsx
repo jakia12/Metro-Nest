@@ -23,7 +23,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header className="w-full bg-white text-slate-900 border-b border-slate-200 shadow-sm">
+    <header className="w-full bg-[#E0F5F9] text-slate-900 border-b border-[#ccc] border-0.5 shadow-sm">
       {/* Main navbar */}
       <div className="mx-auto flex max-w-[1600px] items-center justify-between px-4 py-5">
         {/* Logo */}

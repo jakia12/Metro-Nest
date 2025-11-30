@@ -195,7 +195,7 @@ export default function PropertySearchNew() {
   return (
     <>
       {/* Hero Section with Background */}
-       <section className="relative w-full   overflow-hidden mb-[60px]">
+       <section className="relative w-full   overflow-hidden mt-[60px]">
         {/* Background Image */}
        
 
@@ -236,7 +236,7 @@ export default function PropertySearchNew() {
           </div> */}
 
           {/* Search Card */}
-          <div className="w-full max-w-6xl">
+          <div className="w-full max-w-[1500px]">
             <div className="relative rounded-2xl bg-white shadow-3xl p-5 md:p-10">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 items-end">
                 {/* Keyword Input */}
