@@ -141,15 +141,6 @@ export default function Footer() {
                   <span>Ticket Support</span>
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="/chat"
-                  className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors"
-                >
-                  <MessageCircle className="h-4 w-4 text-rose-500" />
-                  <span>Live Chat</span>
-                </Link>
-              </li>
             </ul>
           </div>
 
